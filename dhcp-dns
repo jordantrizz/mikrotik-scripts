@@ -1,4 +1,3 @@
-
 :local zone "local";
 :local ttl "00:05:00"
 :local hostname
