@@ -1,6 +1,7 @@
 :local zone "local";
 :local ttl "00:05:00"
 :local hostname
+:local comment
 :local ip
 :local dnsip
 :local dhcpip
@@ -10,6 +11,7 @@
 /ip dns static;
 :foreach i in=[find where name ~ (".*\\.".$zone) ] do={
   :set hostname [ get $i name ];
+  :set comment [get $i comment ];
   :set hostname [ :pick $hostname 0 ( [ :len $hostname ] - ( [ :len $zone ] + 1 ) ) ];
   /ip dhcp-server lease;
   :set dhcpnode [ find where host-name=$hostname ];
@@ -23,6 +25,11 @@
        :if ( [ get $n value ] = $hostname ) do={
          :set found true;
        }
+    }
+    :log info ("Checking for static")
+    :if ( comment="static" ) do={
+	:log info ("Found static, setting found to true");
+        :set found true;
     }
     :if ( found ) do={
       :log debug ("Hostname ".$hostname." is static");
