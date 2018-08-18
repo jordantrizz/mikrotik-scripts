@@ -7,9 +7,10 @@
 :local dhcpip
 :local dnsnode
 :local dhcpnode
+:local dhcpserver
 
 /ip dns static;
-:foreach i in=[find where name ~ (".*\\.".$zone) ] do={
+:foreach i in=[find where name ~ (".*\\.".$zone) && comment=""] do={
   :set hostname [ get $i name ];
   :set comment [get $i comment ];
   :set hostname [ :pick $hostname 0 ( [ :len $hostname ] - ( [ :len $zone ] + 1 ) ) ];
@@ -41,7 +42,7 @@
 }
 
 /ip dhcp-server lease;
-:foreach i in=[find] do={
+:foreach i in=[find where server=$dhcpserver] do={
   :set hostname ""
   :local mac
   :set dhcpip [ get $i address ];
